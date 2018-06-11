@@ -158,7 +158,7 @@
                 "apt-add-repository -y ppa:ansible/ansible\n",
                 "apt-get update && apt-get install -y ansible\n",
                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                "git clone https://github.com/OpenVidu/openvidu-cloud-devops /opt/workdir\n",
+                "git clone https://github.com/stavros-zavrakas/openvidu-cloud-devops.git /opt/workdir\n",
                 "pushd /opt/workdir/cloudformation-openvidu\n",
                 "WORKINGDIR=/opt/workdir/cloudformation-openvidu\n",
                 "PIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)\n",
