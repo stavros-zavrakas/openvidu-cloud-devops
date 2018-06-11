@@ -28,22 +28,10 @@
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
-    "PublicElasticIP": {
-      "Description": "In case you want to use Let's Encrypt, the Elastic IP you generated",
-      "Type": "String"
-    },
     "OpenViduSecret": {
       "Description": "Secret to connect to your OpenVidu Server",
       "Type": "String",
       "Default": "MY_SECRET"
-    },
-    "OwnCertCRT": {
-      "Description": "Copy and paste CRT file content here",
-      "Type": "String"
-    },
-    "OwnCertKEY": {
-      "Description": "Copy and paste KEY file content here",
-      "Type": "String"
     },
     "WantToSendInfo": {
       "Description": "Do you agree to send anonymous information to OpenVidu Team for statistics",
@@ -106,16 +94,7 @@
   },
   "Metadata": {
     "AWS::CloudFormation::Interface": {
-      "ParameterGroups": [{
-          "Label": {
-            "default": "SSL Certificate Configuration"
-          },
-          "Parameters": [
-            "PublicElasticIP",
-            "OwnCertCRT",
-            "OwnCertKEY"
-          ]
-        },
+      "ParameterGroups": [
         {
           "Label": {
             "default": "OpenVidu Configuration"
@@ -127,17 +106,8 @@
         }
       ],
       "ParameterLabels": {
-        "PublicElasticIP": {
-          "default": "Elastic IP"
-        },
         "WantOpenViduSecret": {
           "default": "Enter your own secret here"
-        },
-        "OwnCertCRT": {
-          "default": "CRT file"
-        },
-        "OwnCertKEY": {
-          "default": "KEY file"
         },
         "OpenViduSecret": {
           "default": "OpenVidu Secret"
@@ -244,9 +214,6 @@
       "Properties": {
         "InstanceId": {
           "Ref": "WebServerInstance"
-        },
-        "EIP": {
-          "Ref": "PublicElasticIP"
         }
       }
     },
