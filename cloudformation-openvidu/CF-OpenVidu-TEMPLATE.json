@@ -28,10 +28,6 @@
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
-    "MyDomainName": {
-      "Description": "For example: openvidu.io",
-      "Type": "String"
-    },
     "PublicElasticIP": {
       "Description": "In case you want to use Let's Encrypt, the Elastic IP you generated",
       "Type": "String"
@@ -40,20 +36,6 @@
       "Description": "Secret to connect to your OpenVidu Server",
       "Type": "String",
       "Default": "MY_SECRET"
-    },
-    "WhichCert": {
-      "Description": "You can choose from the list below which certificate to use",
-      "Type": "String",
-      "Default": "selfsigned",
-      "AllowedValues": [
-        "selfsigned",
-        "letsencrypt",
-        "owncert"
-      ]
-    },
-    "LetsEncryptEmail": {
-      "Description": "Email necesary for Let's Encrypt notifications",
-      "Type": "String"
     },
     "OwnCertCRT": {
       "Description": "Copy and paste CRT file content here",
@@ -129,9 +111,6 @@
             "default": "SSL Certificate Configuration"
           },
           "Parameters": [
-            "WhichCert",
-            "LetsEncryptEmail",
-            "MyDomainName",
             "PublicElasticIP",
             "OwnCertCRT",
             "OwnCertKEY"
@@ -148,17 +127,8 @@
         }
       ],
       "ParameterLabels": {
-        "WhichCert": {
-          "default": "Type of SSL Certificate"
-        },
-        "MyDomainName": {
-          "default": "Fully qualified domain name"
-        },
         "PublicElasticIP": {
           "default": "Elastic IP"
-        },
-        "LetsEncryptEmail": {
-          "default": "Email"
         },
         "WantOpenViduSecret": {
           "default": "Enter your own secret here"
@@ -176,17 +146,6 @@
           "default": "Free HTTP access to recorded videos"
         }
       }
-    }
-  },
-  "Conditions": {
-    "NoSelfSigned": {
-      "Fn::Not": [{
-        "Fn::Equals": [{
-            "Ref": "WhichCert"
-          },
-          "selfsigned"
-        ]
-      }]
     }
   },
   "Resources": {
@@ -238,34 +197,13 @@
                 "# install docker\n",
                 "ansible-galaxy install geerlingguy.docker\n",
                 "# nginx\n",
-                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/LETSENCRYPT_EMAIL/", { "Ref": "LetsEncryptEmail" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "sed -i \"s/AWS_EIP/$PIP/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "sed -i \"s/AWS_PUBLIC_HOSTNAME/$PublicHostname/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/whichcert: selfsigned/whichcert: ", { "Ref": "WhichCert" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "echo ", { "Ref": "OwnCertCRT" }, " > $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "sed -i \"s/BEGIN CERTIFICATE/BEGINCERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "sed -i \"s/END CERTIFICATE/ENDCERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "sed -i \"s/ /\\n/g\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "sed -i \"s/BEGINCERTIFICATE/BEGIN CERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "sed -i \"s/ENDCERTIFICATE/END CERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
-                "echo ", { "Ref": "OwnCertKEY" }, " > $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/BEGIN RSA PRIVATE KEY/BEGINRSAPRIVATEKEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/BEGIN PRIVATE KEY/BEGINPRIVATEKEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/END RSA PRIVATE KEY/ENDRSAPRIVATEKEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/END PRIVATE KEY/ENDPRIVATEKEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/ /\\n/g\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/BEGINRSAPRIVATEKEY/BEGIN RSA PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/ENDRSAPRIVATEKEY/END RSA PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/BEGINPRIVATEKEY/BEGIN PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "sed -i \"s/ENDPRIVATEKEY/END PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
                 "# OpenVidu\n",
                 "sed -i \"s/OV_VERSION/@OV_V@/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/whichcert: selfsigned/whichcert: ", { "Ref": "WhichCert" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
 		            "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "# KMS\n",
@@ -348,14 +286,14 @@
       "Value": {
         "Fn::Join": [
           "", [
-            "https://",
+            "http://",
             {
               "Fn::GetAtt": [
                 "WebServerInstance",
                 "PublicDnsName"
               ]
             },
-            ":4443"
+            ":8443"
           ]
         ]
       }
@@ -368,21 +306,6 @@
           "PublicIp"
         ]
       }
-    },
-    "WebsiteURLLE": {
-      "Description": "Use this URL to connect to OpenVidu",
-      "Value": {
-        "Fn::Join": [
-          "", [
-            "https://",
-            {
-              "Ref": "MyDomainName"
-            },
-            ":4443"
-          ]
-        ]
-      },
-      "Condition": "NoSelfSigned"
     },
     "OpenViduSecretOutput": {
       "Description": "OpenVidu secret to generate tokens",
