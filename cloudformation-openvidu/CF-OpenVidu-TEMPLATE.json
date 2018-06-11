@@ -171,7 +171,7 @@
                 "sed -i \"s/AWS_PUBLIC_HOSTNAME/$PublicHostname/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "# OpenVidu\n",
-                "sed -i \"s/OV_VERSION/latest/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
+                "sed -i \"s/OV_VERSION/2.1.0/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
 		            "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
