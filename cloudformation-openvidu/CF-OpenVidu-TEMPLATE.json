@@ -171,7 +171,7 @@
                 "sed -i \"s/AWS_PUBLIC_HOSTNAME/$PublicHostname/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
                 "# OpenVidu\n",
-                "sed -i \"s/OV_VERSION/@OV_V@/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
+                "sed -i \"s/OV_VERSION/latest/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
 		            "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
@@ -191,7 +191,7 @@
                 "/usr/local/bin/check_app_ready.sh\n",
                 "/usr/local/bin/cfn-signal -e $? --stack ", {
                   "Ref": "AWS::StackName"
-                }, {
+                }, " --resource WaitCondition --region ", {
                   "Ref": "AWS::Region"
                 }, "\n"
               ]
@@ -207,6 +207,15 @@
             "VolumeSize": "100"
           }
         }]
+      }
+    },
+    "WaitCondition": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Timeout": "PT15M",
+          "Count": "1"
+        }
       }
     },
     "WebServerSecurityGroup": {
