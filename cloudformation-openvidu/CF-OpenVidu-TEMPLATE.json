@@ -221,7 +221,7 @@
                 "/usr/local/bin/check_app_ready.sh\n",
                 "/usr/local/bin/cfn-signal -e $? --stack ", {
                   "Ref": "AWS::StackName"
-                }, " --resource WaitCondition --region ", {
+                }, {
                   "Ref": "AWS::Region"
                 }, "\n"
               ]
@@ -241,22 +241,12 @@
     },
     "MyEIP": {
       "Type": "AWS::EC2::EIPAssociation",
-      "Condition": "NoSelfSigned",
       "Properties": {
         "InstanceId": {
           "Ref": "WebServerInstance"
         },
         "EIP": {
           "Ref": "PublicElasticIP"
-        }
-      }
-    },
-    "WaitCondition": {
-      "Type": "AWS::CloudFormation::WaitCondition",
-      "CreationPolicy": {
-        "ResourceSignal": {
-          "Timeout": "PT15M",
-          "Count": "1"
         }
       }
     },
