@@ -4,12 +4,10 @@
     src: after-shutdown.sh.j2
     dest: /usr/local/bin/after-shutdown.sh
     mode: u+rwx
-  when: whichcert == "selfsigned"
 
 - name: enabling that script at boot time
   copy:
     src: rc.local
     dest: /etc
     mode: 0755
-  when: whichcert == "selfsigned"
 
