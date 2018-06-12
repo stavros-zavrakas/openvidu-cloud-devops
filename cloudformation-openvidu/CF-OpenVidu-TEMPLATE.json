@@ -28,6 +28,10 @@
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
+    "MyDomainName": {
+      "Description": "For example: openvidu.io",
+      "Type": "String"
+    },
     "OpenViduSecret": {
       "Description": "Secret to connect to your OpenVidu Server",
       "Type": "String",
