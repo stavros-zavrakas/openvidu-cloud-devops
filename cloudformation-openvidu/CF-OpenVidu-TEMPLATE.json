@@ -95,6 +95,7 @@
           },
           "Parameters": [
             "OpenViduSecret",
+            "MyDomainName",
             "FreeHTTPAccesToRecordingVideos"
           ]
         }
@@ -102,6 +103,10 @@
       "ParameterLabels": {
         "WantOpenViduSecret": {
           "default": "Enter your own secret here"
+        },
+        "MyDomainName": {
+          "Description": "For example: openvidu.io",
+          "Type": "String"
         },
         "OpenViduSecret": {
           "default": "OpenVidu Secret"
@@ -167,7 +172,7 @@
                 "# OpenVidu\n",
                 "sed -i \"s/OV_VERSION/2.1.0/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/DOMAIN_NAME/$PublicHostname/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
+                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
 		            "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
