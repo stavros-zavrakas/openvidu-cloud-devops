@@ -1,6 +1,6 @@
 server {
-    listen 443 ssl default deferred;9
-    server_name {{ aws_public_hostname }};9
+    listen 8080 default deferred;
+    server_name {{ aws_public_hostname }};
 
     include sites-available/proxy.conf;
 
