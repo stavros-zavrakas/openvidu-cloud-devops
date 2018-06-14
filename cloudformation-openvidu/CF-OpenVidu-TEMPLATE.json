@@ -109,8 +109,7 @@
           "default": "Enter your own secret here"
         },
         "MyDomainName": {
-          "Description": "For example: openvidu.io",
-          "Type": "String"
+          "default": "Fully qualified domain name"
         },
         "OpenViduSecret": {
           "default": "OpenVidu Secret"
