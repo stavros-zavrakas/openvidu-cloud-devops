@@ -183,7 +183,9 @@
                 "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
                 "sed -i \"s/TURN_PASSWORD/", { "Fn::Base64": { "Ref": "AWS::StackName" } }, "/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
                 "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
-
+                "ansible-playbook -i \"localhost,\" -c local play.yml\n",
+                "popd\n",
+                "/usr/local/bin/check_app_ready.sh\n",
                 "/usr/local/bin/cfn-signal -e $? --stack ", {
                   "Ref": "AWS::StackName"
                 }, " --resource WaitCondition --region ", {
