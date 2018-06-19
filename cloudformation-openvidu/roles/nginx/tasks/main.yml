@@ -15,9 +15,4 @@
   template:
     src: templates/kms-ov.conf.j2
     dest: /etc/nginx/sites-enabled/kms-ov
-
-- name: adding default server
-  template:
-    src: templates/default.j2 
-    dest: /etc/nginx/sites-enabled/default
   notify: restart nginx
