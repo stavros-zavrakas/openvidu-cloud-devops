@@ -1,11 +1,11 @@
 server {
-    listen {{ openvidu_port }};
-    server_name {{ aws_public_hostname }};
+    listen 443;
+    server_name {{ aws_eip }};
 
     include sites-available/proxy.conf;
 
     location / {
-        proxy_pass http://{{ aws_eip }}:5443;
+        proxy_pass http://{{ aws_eip }}:3478;
     }
 
 }
