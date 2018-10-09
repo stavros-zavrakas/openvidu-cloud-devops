@@ -2,7 +2,7 @@
 
 {% if reverse_proxy_enabled == "false" %}
 PUBLIC_HOSTNAME={{ domain_name }}
-{% else if whichcert == "letsencrypt" or whichcert == "owncert" %}
+{% elif whichcert == "letsencrypt" or whichcert == "owncert" %}
 PUBLIC_HOSTNAME={{ domain_name }}
 {% else %}
 PUBLIC_HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
