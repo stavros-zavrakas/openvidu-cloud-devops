@@ -1,6 +1,6 @@
 #!/bin/bash
 
-{% if reverse_proxy_enabled == "true" %}
+{% if reverse_proxy_enabled == "false" %}
 PUBLIC_HOSTNAME={{ domain_name }}
 {% else if whichcert == "letsencrypt" or whichcert == "owncert" %}
 PUBLIC_HOSTNAME={{ domain_name }}

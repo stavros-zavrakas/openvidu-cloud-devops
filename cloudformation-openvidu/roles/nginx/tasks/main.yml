@@ -1,25 +1,25 @@
 ---
 - name: Install nginx
   apt: name=nginx state=latest update_cache=true
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false" == "false"
 
 - name: install letsencrypt
   apt: name=letsencrypt state=latest
   when: 
     - whichcert == "letsencrypt"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: Remove default nginx config
   file: name=/etc/nginx/sites-enabled/default state=absent
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: configuring nginx
   copy: src=nginx.conf dest=/etc/nginx/nginx.conf
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: adding default proxy behaviour
   copy: src=proxy.conf dest=/etc/nginx/sites-available/proxy.conf
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: Install nginx site for letsencrypt requests
   template:
@@ -28,7 +28,7 @@
   notify: restart nginx
   when: 
     - whichcert == "letsencrypt"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: Create letsencrypt certificate
   shell: letsencrypt certonly -n --webroot -w /var/www/html -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}
@@ -36,7 +36,7 @@
     creates: /etc/letsencrypt/live/{{ domain_name }}
   when: 
     - whichcert == "letsencrypt"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: previous task to generate self signed certificate
   file: 
@@ -45,7 +45,7 @@
     mode: 0755
   when: 
     - whichcert == "letsencrypt"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: generating self signed certificated
   command: openssl req -new -nodes -x509 -subj "/CN={{ aws_public_hostname }}" -days 3650 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -extensions v3_ca
@@ -53,7 +53,7 @@
     creates: /etc/nginx/ssl/nginx.crt
   when: 
     - whichcert == "selfsigned"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: copying user certificates
   copy: src={{ item }} dest=/etc/nginx/ssl
@@ -62,32 +62,32 @@
     - nginx.crt
   when: 
     - whichcert == "owncert"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
 
 - name: Generate dhparams
   shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
   args:
     creates: /etc/nginx/dhparams.pem
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: adding entry for OpenVidu requests
   template:
     src: templates/kms-ov.conf.j2
     dest: /etc/nginx/sites-enabled/kms-ov
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: adding default server
   template:
     src: templates/default.j2 
     dest: /etc/nginx/sites-enabled/default
   notify: restart nginx
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: copying default index.html
   copy:
     src: index.html
     dest: /var/www/html
-  when: reverse_proxy_enabled
+  when: reverse_proxy_enabled == "false"
 
 - name: Add cron job for certbot renewal (if configured).
   cron:
@@ -97,4 +97,4 @@
     hour: "0"
   when: 
     - whichcert == "letsencrypt"
-    - reverse_proxy_enabled
+    - reverse_proxy_enabled == "false"
