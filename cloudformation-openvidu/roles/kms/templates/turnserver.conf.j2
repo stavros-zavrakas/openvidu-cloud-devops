@@ -1,9 +1,4 @@
-{% if reverse_proxy_enabled == "false" %}
-external-ip={{ domain_name }}
-{% else %}
 external-ip={{ aws_public_ip }}
-{% endif %}
-
 fingerprint
 user={{ turn_user }}:{{ turn_password }}
 lt-cred-mech

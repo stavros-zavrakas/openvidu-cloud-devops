@@ -298,8 +298,6 @@
                 "# KMS\n",
                 "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
                 "sed -i \"s/TURN_PASSWORD/", { "Fn::Base64": { "Ref": "AWS::StackName" } }, "/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
-                "sed -i \"s/REVERSE_PROXY/", { "Ref": "ReverseProxy" }, "/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
-                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
                 "sed -i \"s/AWS_EIP/$PIP/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
                 "# System shutdown\n",
                 "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
