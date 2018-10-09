@@ -15,4 +15,8 @@
 ;pemCertificateRSA=<path>
 ;pemCertificateECDSA=<path>
 
+{% if reverse_proxy_enabled == "true" %}
+turnURL={{ turn_user }}:{{ turn_password }}@{{ domain_name }}:3478
+{% else %}
 turnURL={{ turn_user }}:{{ turn_password }}@{{ aws_public_ip }}:3478
+{% endif %}
