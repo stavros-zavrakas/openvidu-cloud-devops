@@ -1,6 +1,8 @@
 #!/bin/bash
 
-{% if whichcert == "letsencrypt" or whichcert == "owncert" %}
+{% if reverse_proxy_enabled == "true" %}
+PUBLIC_HOSTNAME={{ domain_name }}
+{% else if whichcert == "letsencrypt" or whichcert == "owncert" %}
 PUBLIC_HOSTNAME={{ domain_name }}
 {% else %}
 PUBLIC_HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/public-hostname)

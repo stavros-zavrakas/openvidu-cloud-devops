@@ -1,3 +1,4 @@
+reverse_proxy_enabled: REVERSE_PROXY
 domain_name: DOMAIN_NAME
 letsencrypt_email: LETSENCRYPT_EMAIL
 aws_eip: AWS_EIP

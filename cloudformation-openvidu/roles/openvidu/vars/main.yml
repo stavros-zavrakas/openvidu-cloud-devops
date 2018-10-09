@@ -1,5 +1,6 @@
 ---
 version: OV_VERSION
+reverse_proxy_enabled: REVERSE_PROXY
 openvidusecret: MY_SECRET
 run_ec2: false
 domain_name: DOMAIN_NAME
