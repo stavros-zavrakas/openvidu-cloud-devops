@@ -60,7 +60,7 @@ OpenviduStreamsVideoMaxSendBandwidth: OPENVIDUSTREAMSVIDEOMAX-SEND-BANDWIDTH
 OpenviduStreamsVideoMinSendBandwidth: OPENVIDUSTREAMSVIDEOMIN-SEND-BANDWIDTH
 
 # Openvidu port to connect to
-openvidu_port: 4443
+openvidu_port: OPENVIDU_PORT
 
 # Stats: Set to false if you don't wanna share some information with us:
 # Info:
