@@ -9,6 +9,8 @@ PUBLIC_HOSTNAME={{ domain_name }}
 PUBLIC_HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 {% endif %}
 
+PUBLIC_HOSTNAME={{ domain_name }}
+
 OPENVIDU_OPTIONS="-Dopenvidu.secret={{ openvidusecret }} "
 OPENVIDU_OPTIONS+="-Dopenvidu.recording=true "
 OPENVIDU_OPTIONS+="-Dopenvidu.recording.public-access={{ FreeHTTPAccesToRecordingVideos }} "
