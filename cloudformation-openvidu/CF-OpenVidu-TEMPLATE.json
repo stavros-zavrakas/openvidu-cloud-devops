@@ -74,6 +74,32 @@
       "Type": "String",
       "Default": "false",
       "AllowedValues": ["true", "false"]
+    },
+    "OpenviduRecordingNotification": {
+      "Description": "Which users should receive the recording events in the client side (recordingStarted, recordingStopped).",
+      "Type": "String",
+      "Default": "publisher_moderator",
+      "AllowedValues": [ "all", "publisher_moderator", "moderator", "none"]
+    },
+    "OpenviduStreamsVideoMaxRecvBandwidth": {
+      "Description": "Maximum video bandwidth sent from clients to OpenVidu Server, in kbps. 0 means unconstrained",
+      "Type": "String",
+      "Default": "600"
+    },
+    "OpenviduStreamsVideoMinRecvBandwidth": {
+      "Description": "Minimum video bandwidth sent from clients to OpenVidu Server, in kbps. 0 means unconstrained",
+      "Type": "String",
+      "Default": "300"
+    },    
+    "OpenviduStreamsVideoMaxSendBandwidth": {
+      "Description": "Maximum video bandwidth sent from OpenVidu Server to clients, in kbps. 0 means unconstrained",
+      "Type": "String",
+      "Default": "600"
+    },
+    "OpenviduStreamsVideoMinSendBandwidth": {
+      "Description": "Minimum video bandwidth sent from OpenVidu Server to clients, in kbps. 0 means unconstrained",
+      "Type": "String",
+      "Default": "300"
     }
   },
   "Mappings": {
@@ -143,7 +169,12 @@
           },
           "Parameters": [
             "OpenViduSecret",
-            "FreeHTTPAccesToRecordingVideos"
+            "FreeHTTPAccesToRecordingVideos",
+            "OpenviduRecordingNotification",
+            "OpenviduStreamsVideoMaxRecvBandwidth",
+            "OpenviduStreamsVideoMinRecvBandwidth",
+            "OpenviduStreamsVideoMaxSendBandwidth",
+            "OpenviduStreamsVideoMinSendBandwidth"
           ]
         }
       ],
@@ -231,19 +262,32 @@
                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
                 "git clone https://github.com/OpenVidu/openvidu-cloud-devops /opt/workdir\n",
                 "pushd /opt/workdir/cloudformation-openvidu\n",
+                "git checkout @CF_V@\n",
                 "WORKINGDIR=/opt/workdir/cloudformation-openvidu\n",
                 "PIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)\n",
-                "OPENVIDU_PORT=4443\n",
                 "PublicHostname=$(curl http://169.254.169.254/latest/meta-data/public-hostname)\n",
+                "OPENVIDU_VERSION=@OV_V@\n",
                 "# install docker\n",
                 "ansible-galaxy install geerlingguy.docker\n",
-                "# nginx\n",
-                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/LETSENCRYPT_EMAIL/", { "Ref": "LetsEncryptEmail" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/AWS_EIP/$PIP/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/AWS_PUBLIC_HOSTNAME/$PublicHostname/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/whichcert: selfsigned/whichcert: ", { "Ref": "WhichCert" }, "/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
-                "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/nginx/vars/main.yml\n",
+                "# Changes in group vars\n",
+                "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/TURN_PASSWORD/", { "Fn::Base64": { "Ref": "AWS::StackName" } }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/whichcert: selfsigned/whichcert: ", { "Ref": "WhichCert" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/LETSENCRYPT_EMAIL/", { "Ref": "LetsEncryptEmail" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OV_VERSION/$OPENVIDU_VERSION/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/allowsendinfo: true/allowsendinfo: ", { "Ref": "WantToSendInfo" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/AWS_EIP/$PIP/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/AWS_PUBLIC_HOSTNAME/$PublicHostname/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OPENVIDURECORDINGNOTIFICATION/", { "Ref": "OpenviduRecordingNotification" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OPENVIDUSTREAMSVIDEOMAX-RECV-BANDWIDTH/", { "Ref": "OpenviduStreamsVideoMaxRecvBandwidth" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OPENVIDUSTREAMSVIDEOMIN-RECV-BANDWIDTH/", { "Ref": "OpenviduStreamsVideoMinRecvBandwidth" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OPENVIDUSTREAMSVIDEOMAX-SEND-BANDWIDTH/", { "Ref": "OpenviduStreamsVideoMaxSendBandwidth" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "sed -i \"s/OPENVIDUSTREAMSVIDEOMIN-SEND-BANDWIDTH/", { "Ref": "OpenviduStreamsVideoMinSendBandwidth" }, "/\" $WORKINGDIR/group_vars/all\n",
+                "# OwnCerts changes\n",
                 "echo ", { "Ref": "OwnCertCRT" }, " > $WORKINGDIR/roles/nginx/files/nginx.crt\n",
                 "sed -i \"s/BEGIN CERTIFICATE/BEGINCERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
                 "sed -i \"s/END CERTIFICATE/ENDCERTIFICATE/\" $WORKINGDIR/roles/nginx/files/nginx.crt\n",
@@ -260,24 +304,6 @@
                 "sed -i \"s/ENDRSAPRIVATEKEY/END RSA PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
                 "sed -i \"s/BEGINPRIVATEKEY/BEGIN PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
                 "sed -i \"s/ENDPRIVATEKEY/END PRIVATE KEY/\" $WORKINGDIR/roles/nginx/files/nginx.key\n",
-                "# OpenVidu\n",
-                "sed -i \"s/OV_VERSION/@OV_V@/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/run_ec2: false/run_ec2: true/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/DOMAIN_NAME/", { "Ref": "MyDomainName" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/FREEHTTPACCESTORECORDINGVIDEOS/", { "Ref": "FreeHTTPAccesToRecordingVideos" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/whichcert: selfsigned/whichcert: ", { "Ref": "WhichCert" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-		            "sed -i \"s/openvidusecret: MY_SECRET/openvidusecret: ", { "Ref": "OpenViduSecret" }, "/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/openvidu/vars/main.yml\n",
-                "# KMS\n",
-                "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
-                "sed -i \"s/TURN_PASSWORD/", { "Fn::Base64": { "Ref": "AWS::StackName" } }, "/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
-                "sed -i \"s/AWS_EIP/$PIP/\" $WORKINGDIR/roles/kms/vars/main.yml\n",
-                "# System shutdown\n",
-                "sed -i \"s/TURN_USER/turn_user/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
-                "sed -i \"s/TURN_PASSWORD/", { "Fn::Base64": { "Ref": "AWS::StackName" } }, "/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
-                "sed -i \"s/openvidu_port: 8443/openvidu_port: $OPENVIDU_PORT/\" $WORKINGDIR/roles/system-shutdown/vars/main.yml\n",
-                "# stats\n",
-                "sed -i \"s/allowsendinfo: true/allowsendinfo: ", { "Ref": "WantToSendInfo" }, "/\" $WORKINGDIR/roles/stats/vars/main.yml\n",
                 "ansible-playbook -i \"localhost,\" -c local play.yml\n",
                 "popd\n",
                 "/usr/local/bin/check_app_ready.sh\n",

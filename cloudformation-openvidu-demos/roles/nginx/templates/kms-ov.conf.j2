@@ -1,5 +1,5 @@
 server {
-    listen 4443 ssl;
+    listen {{ openvidu_port }} ssl;
 {% if whichcert == "letsencrypt" or whichcert == "owncert" %}
     server_name {{ domain_name }};
 {% else %}
@@ -19,7 +19,7 @@ server {
     include sites-available/proxy.conf;
 
     location / {
-        proxy_pass http://{{ aws_eip }}:5443;
+        proxy_pass http://{{ aws_public_ip }}:5443;
     }
 
 }
