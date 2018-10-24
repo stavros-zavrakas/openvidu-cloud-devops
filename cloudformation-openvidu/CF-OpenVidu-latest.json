@@ -335,7 +335,16 @@
               ]
             ]
           }
-        }
+        },
+        "BlockDeviceMappings": [{
+          "DeviceName": "/dev/sda1",
+          "Ebs": {
+            "VolumeType": "io1",
+            "Iops": "200",
+            "DeleteOnTermination": "true",
+            "VolumeSize": "100"
+          }
+        }]
       }
     },
     "MyEIP": {
